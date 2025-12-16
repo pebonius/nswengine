@@ -46,7 +46,7 @@
       "id": 3,
       "textColor": "powderblue",
       "backgroundColor": "slateblue",
-      "description": "i am not very good at coding. apparently in my dreams as well. but in my dream the simplicity of the engine allowed for a lot of creativity",
+      "description": "i am not good at coming up with complex things. apparently in my dreams as well. but in my dream the simplicity of the engine allowed for a lot of creativity",
       "south": {
         "label": "hmm",
         "linkTo": 1
@@ -84,7 +84,7 @@
       "id": 6,
       "textColor": "darkslateblue",
       "backgroundColor": "mediumorchid",
-      "description": "you could have the rooms lock into a kind of euclidean map, where you can always go back and forth between neighboring rooms. or...",
+      "description": "you could have the rooms lock into a kind of euclidean map, where the player can always go back and forth between neighboring rooms. or...",
       "west": {
         "label": "go back",
         "linkTo": 5
@@ -124,7 +124,7 @@
         "linkTo": 1
       },
       "south": {
-        "label": "that wasn't here before",
+        "label": "this wasn't here before",
         "linkTo": 10
       }
     },
