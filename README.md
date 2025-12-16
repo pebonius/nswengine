@@ -75,4 +75,4 @@ the bulk of the game logic is in the `source/nswengine.js` file. if for whatever
 
 ## license
 
-i am releasing the source code under MIT license (see `LICENSE.txt`) which is super liberal, provided that you retain the license file you can pretty much do whatever you want
+i am releasing the source code under MIT license (see `LICENSE` file) which is super liberal, provided that you retain the license file you can pretty much do whatever you want
