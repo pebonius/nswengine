@@ -65,9 +65,7 @@ the dimensions you'll want to set for the embed window are 640px width by 480px 
 
 ## controls
 
-at the moment, the player controls movement between the rooms using arrow keys (up down left right)
-
-i want to add pointer controls (touch, mouse) later
+the player controls movement between the rooms using either arrow keys (up down left right) or mouse / touch input
 
 ## modifying the engine
 
