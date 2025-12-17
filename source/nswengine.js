@@ -1,4 +1,5 @@
 import { drawRectangle, drawText, stringWidth } from "./graphics.js";
+import Rectangle from "./rectangle.js";
 
 export default class NSWEngine {
   #dataFilePath = "./data.json";
@@ -11,6 +12,8 @@ export default class NSWEngine {
   #descriptionFontSize = 24;
   #exitFontSize = 16;
   #exitLabelMargin = 16;
+  #touchZoneLongSide = 240;
+  #touchZoneShortSide = 120;
 
   constructor() {}
   get dataFilePath() {
@@ -47,9 +50,60 @@ export default class NSWEngine {
     this.game = game;
     this.data = game.content.data;
     this.currentRoomId = 0;
+
+    const upTouchZonePosX =
+      game.canvas.width * 0.5 - this.#touchZoneLongSide * 0.5;
+    const upTouchZonePosY = 0;
+
+    this.upTouchZone = new Rectangle(
+      upTouchZonePosX,
+      upTouchZonePosY,
+      this.#touchZoneLongSide,
+      this.#touchZoneShortSide,
+      0,
+      "red"
+    );
+
+    const downTouchZonePosX = upTouchZonePosX;
+    const downTouchZonePosY = game.canvas.height - this.#touchZoneShortSide;
+
+    this.downTouchZone = new Rectangle(
+      downTouchZonePosX,
+      downTouchZonePosY,
+      this.#touchZoneLongSide,
+      this.#touchZoneShortSide,
+      0,
+      "red"
+    );
+
+    const leftTouchZonePosX = 0;
+    const leftTouchZonePosY =
+      game.canvas.height * 0.5 - this.#touchZoneLongSide * 0.5;
+
+    this.leftTouchZone = new Rectangle(
+      leftTouchZonePosX,
+      leftTouchZonePosY,
+      this.#touchZoneShortSide,
+      this.#touchZoneLongSide,
+      0,
+      "red"
+    );
+
+    const rightTouchZonePosX = game.canvas.width - this.#touchZoneShortSide;
+    const rightTouchZonePosY = leftTouchZonePosY;
+
+    this.rightTouchZone = new Rectangle(
+      rightTouchZonePosX,
+      rightTouchZonePosY,
+      this.#touchZoneShortSide,
+      this.#touchZoneLongSide,
+      0,
+      "red"
+    );
   }
   update(game) {
     this.handleKeyboardInput(game);
+    this.handlePointerInput(game);
   }
   handleKeyboardInput(game) {
     const input = game.input;
@@ -66,6 +120,30 @@ export default class NSWEngine {
       this.go("east");
     }
   }
+  handlePointerInput(game) {
+    const input = game.input;
+
+    if (input.isClick()) {
+      this.checkForPointerActions(input.pointerPosition);
+    }
+  }
+  checkForPointerActions(pointerPosition) {
+    if (this.upTouchZone.contains(pointerPosition.x, pointerPosition.y)) {
+      this.go("north");
+    } else if (
+      this.downTouchZone.contains(pointerPosition.x, pointerPosition.y)
+    ) {
+      this.go("south");
+    } else if (
+      this.leftTouchZone.contains(pointerPosition.x, pointerPosition.y)
+    ) {
+      this.go("west");
+    } else if (
+      this.rightTouchZone.contains(pointerPosition.x, pointerPosition.y)
+    ) {
+      this.go("east");
+    }
+  }
   go(direction) {
     if (!this.currentRoom[direction]) {
       return;
@@ -77,6 +155,12 @@ export default class NSWEngine {
     this.drawBackground(context);
     this.drawRoomDescription(context);
     this.drawRoomExits(context);
+  }
+  drawTouchZones(context) {
+    this.upTouchZone.draw(context);
+    this.downTouchZone.draw(context);
+    this.leftTouchZone.draw(context);
+    this.rightTouchZone.draw(context);
   }
   drawBackground(context) {
     drawRectangle(
