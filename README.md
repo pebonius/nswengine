@@ -83,6 +83,24 @@ this way you can define ascii graphics, and the description will align horizonta
 
 you can also use the optional `font` parameter to set the font to a monospace one
 
+mind that certain characters, like the backslash `\` will need to be escaped by putting another backslash in front `\`, otherwise json will get angry at you
+
+so this won't work
+
+```json
+"description": [
+    "----------------\-------",
+  ],
+```
+
+but this will
+
+```json
+"description": [
+    "----------------\\-------",
+  ],
+```
+
 ## playing the game
 
 to play the game locally you'll need to open the `index.html` file with `Live Server`, or `http-server`, or some other similar solution.
