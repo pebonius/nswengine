@@ -53,7 +53,7 @@ also, the first room serves as the game's "title screen", the game does not have
 
 if you want to use ascii graphics in rooms, you can make the room `description` an array instead of a string
 
-this way you can define ascii graphics, and the description will align vertically to the left, based on the width of the first line
+this way you can define ascii graphics, and the description will align horizontally to the left, based on the width of the first line
 
 ```json
 {
