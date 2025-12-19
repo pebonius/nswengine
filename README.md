@@ -83,13 +83,13 @@ this way you can define ascii graphics, and the description will align horizonta
 
 you can also use the optional `font` parameter to set the font to a monospace one
 
-mind that certain characters, like the backslash `\` will need to be escaped by putting another backslash in front `\`, otherwise json will get angry at you
+when adding ascii graphics mind that certain characters, like the backslash `\` or quotation marks `"` will need to be escaped by putting a backslash in front `\`, otherwise json will get angry at you
 
 so this won't work
 
 ```json
 "description": [
-    "----------------\-------",
+    "----------------"-------",
   ],
 ```
 
@@ -97,7 +97,7 @@ but this will
 
 ```json
 "description": [
-    "----------------\\-------",
+    "----------------\"-------",
   ],
 ```
 
