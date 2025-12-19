@@ -132,9 +132,36 @@
       "id": 10,
       "textColor": "gainsboro",
       "backgroundColor": "darkolivegreen",
-      "description": "we had a bit of an adventure walking around, right? and this game is only 10 rooms",
+      "description": "we had a bit of an adventure walking around, right? and this game was only 10 rooms",
       "north": {
         "label": "nice",
+        "linkTo": 0
+      },
+      "south": {
+        "label": "outgrabe chamber",
+        "linkTo": 11
+      }
+    },
+    {
+      "id": 11,
+      "font": "monospace",
+      "textColor": "gainsboro",
+      "backgroundColor": "darkolivegreen",
+      "description": [
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------",
+        "------------------------"
+      ],
+      "north": {
+        "label": "ascii?",
         "linkTo": 0
       }
     }

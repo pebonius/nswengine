@@ -1,4 +1,9 @@
-import { drawRectangle, drawText, stringWidth } from "./graphics.js";
+import {
+  defaultFont,
+  drawRectangle,
+  drawText,
+  stringWidth,
+} from "./graphics.js";
 import Rectangle from "./rectangle.js";
 
 export default class NSWEngine {
@@ -45,6 +50,13 @@ export default class NSWEngine {
   }
   get backgroundColor() {
     return this.currentRoom.backgroundColor;
+  }
+  get font() {
+    if (!this.currentRoom.font) {
+      return defaultFont;
+    }
+
+    return this.currentRoom.font;
   }
   start(game) {
     this.game = game;
@@ -174,12 +186,24 @@ export default class NSWEngine {
     );
   }
   drawRoomDescription(context) {
+    const description = this.currentRoom.description;
+
+    if (typeof description === "string") {
+      this.drawDescriptionString(context);
+    }
+
+    if (Array.isArray(description)) {
+      this.drawDescriptionArray(context);
+    }
+  }
+  drawDescriptionString(context) {
     this.descriptionSplitStrings().forEach((line, index) => {
       const descriptionString = line;
       const descriptionWidth = stringWidth(
         context,
         descriptionString,
-        this.#descriptionFontSize
+        this.#descriptionFontSize,
+        this.font
       );
       const posX = context.canvas.width * 0.5 - descriptionWidth * 0.5;
       const posY =
@@ -195,7 +219,8 @@ export default class NSWEngine {
         this.#descriptionFontSize,
         this.textColor,
         posX,
-        posY
+        posY,
+        this.font
       );
     });
   }
@@ -228,6 +253,35 @@ export default class NSWEngine {
 
     return lines;
   }
+  drawDescriptionArray(context) {
+    const description = this.currentRoom.description;
+
+    const descriptionWidth = stringWidth(
+      context,
+      description[0],
+      this.#descriptionFontSize,
+      this.font
+    );
+
+    const posX = context.canvas.width * 0.5 - descriptionWidth * 0.5;
+
+    description.forEach((line, index) => {
+      const posY =
+        context.canvas.height * 0.5 -
+        this.#descriptionFontSize * description.length * 0.5 +
+        index * this.#descriptionFontSize;
+
+      drawText(
+        context,
+        line,
+        this.#descriptionFontSize,
+        this.textColor,
+        posX,
+        posY,
+        this.font
+      );
+    });
+  }
   drawRoomExits(context) {
     this.drawNorthExit(context);
     this.drawSouthExit(context);
@@ -240,11 +294,24 @@ export default class NSWEngine {
     }
 
     const label = this.currentRoom.north.label;
-    const labelWidth = stringWidth(context, label, this.#exitFontSize);
+    const labelWidth = stringWidth(
+      context,
+      label,
+      this.#exitFontSize,
+      this.font
+    );
     const posX = context.canvas.width * 0.5 - labelWidth * 0.5;
     const posY = this.#exitLabelMargin;
 
-    drawText(context, label, this.#exitFontSize, this.textColor, posX, posY);
+    drawText(
+      context,
+      label,
+      this.#exitFontSize,
+      this.textColor,
+      posX,
+      posY,
+      this.font
+    );
   }
   drawSouthExit(context) {
     if (!this.currentRoom.south) {
@@ -252,12 +319,25 @@ export default class NSWEngine {
     }
 
     const label = this.currentRoom.south.label;
-    const labelWidth = stringWidth(context, label, this.#exitFontSize);
+    const labelWidth = stringWidth(
+      context,
+      label,
+      this.#exitFontSize,
+      this.font
+    );
     const posX = context.canvas.width * 0.5 - labelWidth * 0.5;
     const posY =
       context.canvas.height - this.#exitFontSize - this.#exitLabelMargin;
 
-    drawText(context, label, this.#exitFontSize, this.textColor, posX, posY);
+    drawText(
+      context,
+      label,
+      this.#exitFontSize,
+      this.textColor,
+      posX,
+      posY,
+      this.font
+    );
   }
   drawWestExit(context) {
     if (!this.currentRoom.west) {
@@ -265,11 +345,24 @@ export default class NSWEngine {
     }
 
     const label = this.currentRoom.west.label;
-    const labelWidth = stringWidth(context, label, this.#exitFontSize);
+    const labelWidth = stringWidth(
+      context,
+      label,
+      this.#exitFontSize,
+      this.font
+    );
     const posX = this.#exitLabelMargin;
     const posY = context.canvas.height * 0.5 - this.#exitFontSize * 0.5;
 
-    drawText(context, label, this.#exitFontSize, this.textColor, posX, posY);
+    drawText(
+      context,
+      label,
+      this.#exitFontSize,
+      this.textColor,
+      posX,
+      posY,
+      this.font
+    );
   }
   drawEastExit(context) {
     if (!this.currentRoom.east) {
@@ -277,10 +370,23 @@ export default class NSWEngine {
     }
 
     const label = this.currentRoom.east.label;
-    const labelWidth = stringWidth(context, label, this.#exitFontSize);
+    const labelWidth = stringWidth(
+      context,
+      label,
+      this.#exitFontSize,
+      this.font
+    );
     const posX = context.canvas.width - labelWidth - this.#exitLabelMargin;
     const posY = context.canvas.height * 0.5 - this.#exitFontSize * 0.5;
 
-    drawText(context, label, this.#exitFontSize, this.textColor, posX, posY);
+    drawText(
+      context,
+      label,
+      this.#exitFontSize,
+      this.textColor,
+      posX,
+      posY,
+      this.font
+    );
   }
 }

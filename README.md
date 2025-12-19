@@ -49,6 +49,40 @@ every exit has
 
 also, the first room serves as the game's "title screen", the game does not have any state management outside switching between the rooms
 
+## ascii support
+
+if you want to use ascii graphics in rooms, you can make the room `description` an array instead of a string
+
+this way you can define ascii graphics, and the description will align vertically to the left, based on the width of the first line
+
+```json
+{
+  "id": 11,
+  "font": "monospace",
+  "textColor": "gainsboro",
+  "backgroundColor": "darkolivegreen",
+  "description": [
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------",
+    "------------------------"
+  ],
+  "north": {
+    "label": "ascii?",
+    "linkTo": 0
+  }
+}
+```
+
+you can also use the optional `font` parameter to set the font to a monospace one
+
 ## playing the game
 
 to play the game locally you'll need to open the `index.html` file with `Live Server`, or `http-server`, or some other similar solution.
