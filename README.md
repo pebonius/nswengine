@@ -123,7 +123,7 @@ the player controls movement between the rooms using either arrow keys (up down 
 
 > Q: i downloaded the source, but when i open the `index.html` file, the test game doesn't load
 
-A: open the console in the same browser tab. if you see an error like `Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource`, most likely you opened the `index.html` file directly. you need to run the file with a solution like [http-server](https://www.npmjs.com/package/http-server) or e.g. [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) plugin if you use VS Code
+A: open the console in the same browser tab. if you see an error like `Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource`, most likely you opened the `index.html` file directly. you need to run the game in localhost with a solution like [http-server](https://www.npmjs.com/package/http-server) or e.g. [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) plugin if you use VS Code
 
 > Q: i changed the content of `data.json` file and now the game refuses to load, i just see a blue screen
 
