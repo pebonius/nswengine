@@ -1,3 +1,4 @@
+import Debug from "./debug.js";
 import {
   defaultFont,
   drawRectangle,
@@ -161,7 +162,7 @@ export default class NSWEngine {
       return;
     }
     this.currentRoomId = this.currentRoom[direction].linkTo;
-    console.log(this.currentRoomId);
+    Debug.log(`entering room ${this.currentRoomId}`);
   }
   draw(context) {
     this.drawBackground(context);

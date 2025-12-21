@@ -44,7 +44,15 @@ export default class ContentManager {
   get loadingId() {
     return this.assetsCurrentlyLoading.length;
   }
-  loadContent(dataFilePath, imagesPath, images, soundsPath, sounds, musicTracksPath, musicTracks) {
+  loadContent(
+    dataFilePath,
+    imagesPath,
+    images,
+    soundsPath,
+    sounds,
+    musicTracksPath,
+    musicTracks
+  ) {
     this.loadData(dataFilePath);
     this.loadImages(imagesPath, images);
     this.loadSounds(soundsPath, sounds);
@@ -62,19 +70,22 @@ export default class ContentManager {
       this.data = json;
     }, dataFilePath);
   }
-  loadJsonObject(assetInjection, filePath) {
+  async loadJsonObject(assetInjection, filePath) {
     this.debugLogAssetLoading(filePath);
     this.addToLoadingArray(filePath);
 
     const request = new Request(filePath);
     const init = noCacheInit();
 
-    fetch(request, init)
-      .then((response) => response.json())
-      .then((json) => {
-        assetInjection(json);
-        this.removeFromLoadingArray(filePath);
-      });
+    try {
+      const response = await fetch(request, init);
+      this.handleBadResponse(response, filePath);
+      const json = await response.json();
+      assetInjection(json);
+      this.removeFromLoadingArray(filePath);
+    } catch (error) {
+      Debug.log(`failed to create asset from json file \n${error}`);
+    }
   }
   loadImages(imagesPath, images) {
     if (!imagesPath) {
@@ -216,5 +227,18 @@ export default class ContentManager {
     }
 
     return this[assetName];
+  }
+  handleBadResponse(response, filePath) {
+    if (response.status === 404) {
+      throw new Error(
+        `file ${filePath} not found (404), make sure the file is in correct directory`
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `could not get file ${filePath} - response status: ${response.status}`
+      );
+    }
   }
 }

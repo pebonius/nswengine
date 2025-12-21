@@ -119,6 +119,16 @@ the dimensions you'll want to set for the embed window are 640px width by 480px 
 
 the player controls movement between the rooms using either arrow keys (up down left right) or mouse / touch input
 
+## debugging common issues
+
+> Q: i downloaded the source, but when i open the index.html file, the test game doesn't load
+
+A: open the console in the same browser tab. if you see an error like `Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource`, most likely you opened the `index.html` file directly. you need to run the file with a solution like [http-server](https://www.npmjs.com/package/http-server) or e.g. [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) plugin if you use VS Code
+
+> Q: i changed the content of `data.json` file and now the game refuses to load, i just see a blue screen
+
+A: if you modified the `data.json` file, and the game just shows a blue screen, open the console the same browser tab. if the console has a `SyntaxError: JSON.parse` error, this means you have a formatting issue in json. the error message should help you locate the exact issue
+
 ## modifying the engine
 
 the bulk of the game logic is in the `source/nswengine.js` file. if for whatever reason you'd like to modify something that's probably a good place to start
