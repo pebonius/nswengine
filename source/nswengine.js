@@ -1,11 +1,4 @@
 import Debug from "./debug.js";
-import {
-  defaultFont,
-  drawRectangle,
-  drawText,
-  stringWidth,
-} from "./graphics.js";
-import Rectangle from "./rectangle.js";
 
 export default class NSWEngine {
   #dataFilePath = "./data.json";
@@ -15,13 +8,11 @@ export default class NSWEngine {
   #sounds = [];
   #musicTracksPath = "";
   #musicTracks = [];
-  #descriptionFontSize = 24;
-  #exitFontSize = 16;
-  #exitLabelMargin = 16;
-  #touchZoneLongSide = 240;
-  #touchZoneShortSide = 120;
+  #defaultFont = "Arial";
 
-  constructor() {}
+  constructor() {
+    this.addButtonOnClickEvents();
+  }
   get dataFilePath() {
     return this.#dataFilePath;
   }
@@ -53,70 +44,28 @@ export default class NSWEngine {
     return this.currentRoom.backgroundColor;
   }
   get font() {
-    if (!this.currentRoom.font) {
-      return defaultFont;
-    }
-
-    return this.currentRoom.font;
+    return !this.currentRoom.font ? this.#defaultFont : this.currentRoom.font;
+  }
+  getExitButton(direction) {
+    return document.querySelector(`#${direction}-exit-button`);
   }
   start(game) {
     this.game = game;
     this.data = game.content.data;
     this.currentRoomId = 0;
+    this.displayCurrentRoom();
+  }
+  addButtonOnClickEvents() {
+    ["north", "south", "west", "east"].forEach((direction) => {
+      const exitButton = this.getExitButton(direction);
 
-    const upTouchZonePosX =
-      game.canvas.width * 0.5 - this.#touchZoneLongSide * 0.5;
-    const upTouchZonePosY = 0;
-
-    this.upTouchZone = new Rectangle(
-      upTouchZonePosX,
-      upTouchZonePosY,
-      this.#touchZoneLongSide,
-      this.#touchZoneShortSide,
-      0,
-      "red"
-    );
-
-    const downTouchZonePosX = upTouchZonePosX;
-    const downTouchZonePosY = game.canvas.height - this.#touchZoneShortSide;
-
-    this.downTouchZone = new Rectangle(
-      downTouchZonePosX,
-      downTouchZonePosY,
-      this.#touchZoneLongSide,
-      this.#touchZoneShortSide,
-      0,
-      "red"
-    );
-
-    const leftTouchZonePosX = 0;
-    const leftTouchZonePosY =
-      game.canvas.height * 0.5 - this.#touchZoneLongSide * 0.5;
-
-    this.leftTouchZone = new Rectangle(
-      leftTouchZonePosX,
-      leftTouchZonePosY,
-      this.#touchZoneShortSide,
-      this.#touchZoneLongSide,
-      0,
-      "red"
-    );
-
-    const rightTouchZonePosX = game.canvas.width - this.#touchZoneShortSide;
-    const rightTouchZonePosY = leftTouchZonePosY;
-
-    this.rightTouchZone = new Rectangle(
-      rightTouchZonePosX,
-      rightTouchZonePosY,
-      this.#touchZoneShortSide,
-      this.#touchZoneLongSide,
-      0,
-      "red"
-    );
+      exitButton.onclick = () => {
+        this.go(direction);
+      };
+    });
   }
   update(game) {
     this.handleKeyboardInput(game);
-    this.handlePointerInput(game);
   }
   handleKeyboardInput(game) {
     const input = game.input;
@@ -133,261 +82,62 @@ export default class NSWEngine {
       this.go("east");
     }
   }
-  handlePointerInput(game) {
-    const input = game.input;
-
-    if (input.isClick()) {
-      this.checkForPointerActions(input.pointerPosition);
-    }
-  }
-  checkForPointerActions(pointerPosition) {
-    if (this.upTouchZone.contains(pointerPosition.x, pointerPosition.y)) {
-      this.go("north");
-    } else if (
-      this.downTouchZone.contains(pointerPosition.x, pointerPosition.y)
-    ) {
-      this.go("south");
-    } else if (
-      this.leftTouchZone.contains(pointerPosition.x, pointerPosition.y)
-    ) {
-      this.go("west");
-    } else if (
-      this.rightTouchZone.contains(pointerPosition.x, pointerPosition.y)
-    ) {
-      this.go("east");
-    }
-  }
   go(direction) {
     if (!this.currentRoom[direction]) {
       return;
     }
     this.currentRoomId = this.currentRoom[direction].linkTo;
+    this.displayCurrentRoom();
     Debug.log(`entering room ${this.currentRoomId}`);
   }
-  draw(context) {
-    this.drawBackground(context);
-    this.drawRoomDescription(context);
-    this.drawRoomExits(context);
+  displayCurrentRoom() {
+    this.setColors();
+    this.setFont();
+    this.displayRoomDescription();
+    this.displayExit("north");
+    this.displayExit("south");
+    this.displayExit("west");
+    this.displayExit("east");
   }
-  drawTouchZones(context) {
-    this.upTouchZone.draw(context);
-    this.downTouchZone.draw(context);
-    this.leftTouchZone.draw(context);
-    this.rightTouchZone.draw(context);
-  }
-  drawBackground(context) {
-    drawRectangle(
-      context,
-      0,
-      0,
-      context.canvas.width,
-      context.canvas.height,
-      0,
-      this.backgroundColor
-    );
-  }
-  drawRoomDescription(context) {
-    const description = this.currentRoom.description;
+  setColors() {
+    const gameContainer = document.querySelector("#game-container");
 
-    if (typeof description === "string") {
-      this.drawDescriptionString(context);
-    }
+    gameContainer.style.backgroundColor = this.backgroundColor;
+    gameContainer.style.color = this.textColor;
+  }
+  setFont() {
+    const gameContainer = document.querySelector("#game-container");
+
+    gameContainer.style.fontFamily = this.font;
+  }
+  displayRoomDescription() {
+    const roomDescriptionDiv = document.querySelector("#room-description");
+    const description = this.currentRoom.description;
 
     if (Array.isArray(description)) {
-      this.drawDescriptionArray(context);
+      this.displayDescriptionArray(description, roomDescriptionDiv);
+    } else if (typeof description === "string") {
+      this.displayDescriptionString(roomDescriptionDiv);
     }
   }
-  drawDescriptionString(context) {
-    this.descriptionSplitStrings().forEach((line, index) => {
-      const descriptionString = line;
-      const descriptionWidth = stringWidth(
-        context,
-        descriptionString,
-        this.#descriptionFontSize,
-        this.font
-      );
-      const posX = context.canvas.width * 0.5 - descriptionWidth * 0.5;
-      const posY =
-        context.canvas.height * 0.5 -
-        this.#descriptionFontSize *
-          this.descriptionSplitStrings().length *
-          0.5 +
-        index * this.#descriptionFontSize;
-
-      drawText(
-        context,
-        descriptionString,
-        this.#descriptionFontSize,
-        this.textColor,
-        posX,
-        posY,
-        this.font
-      );
-    });
+  displayDescriptionString(roomDescriptionDiv) {
+    roomDescriptionDiv.style.whiteSpace = "normal";
+    roomDescriptionDiv.textContent = this.currentRoom.description;
   }
-  descriptionSplitStrings() {
-    const description = this.currentRoom.description;
-
-    const words = description.split(" ");
-
-    const lines = [];
-    const maxCharsPerLine = 28;
-    let currentLineId = 0;
-
-    words.forEach((word) => {
-      const currentLine = lines[currentLineId];
-      if (!currentLine) {
-        lines[currentLineId] = word;
-        return;
-      }
-
-      if (currentLine.length < maxCharsPerLine) {
-        lines[currentLineId] = `${currentLine} ${word}`;
-        return;
-      }
-
-      if (currentLine.length >= maxCharsPerLine) {
-        currentLineId++;
-        lines[currentLineId] = word;
-      }
-    });
-
-    return lines;
+  displayDescriptionArray(description, roomDescriptionDiv) {
+    const htmlContent = description.join("<br>");
+    roomDescriptionDiv.style.whiteSpace = "preserve nowrap";
+    roomDescriptionDiv.innerHTML = htmlContent;
   }
-  drawDescriptionArray(context) {
-    const description = this.currentRoom.description;
+  displayExit(direction) {
+    const exitButton = this.getExitButton(direction);
 
-    const descriptionWidth = stringWidth(
-      context,
-      description[0],
-      this.#descriptionFontSize,
-      this.font
-    );
-
-    const posX = context.canvas.width * 0.5 - descriptionWidth * 0.5;
-
-    description.forEach((line, index) => {
-      const posY =
-        context.canvas.height * 0.5 -
-        this.#descriptionFontSize * description.length * 0.5 +
-        index * this.#descriptionFontSize;
-
-      drawText(
-        context,
-        line,
-        this.#descriptionFontSize,
-        this.textColor,
-        posX,
-        posY,
-        this.font
-      );
-    });
-  }
-  drawRoomExits(context) {
-    this.drawNorthExit(context);
-    this.drawSouthExit(context);
-    this.drawWestExit(context);
-    this.drawEastExit(context);
-  }
-  drawNorthExit(context) {
-    if (!this.currentRoom.north) {
+    if (!this.currentRoom[direction]) {
+      exitButton.style.display = "none";
       return;
     }
 
-    const label = this.currentRoom.north.label;
-    const labelWidth = stringWidth(
-      context,
-      label,
-      this.#exitFontSize,
-      this.font
-    );
-    const posX = context.canvas.width * 0.5 - labelWidth * 0.5;
-    const posY = this.#exitLabelMargin;
-
-    drawText(
-      context,
-      label,
-      this.#exitFontSize,
-      this.textColor,
-      posX,
-      posY,
-      this.font
-    );
-  }
-  drawSouthExit(context) {
-    if (!this.currentRoom.south) {
-      return;
-    }
-
-    const label = this.currentRoom.south.label;
-    const labelWidth = stringWidth(
-      context,
-      label,
-      this.#exitFontSize,
-      this.font
-    );
-    const posX = context.canvas.width * 0.5 - labelWidth * 0.5;
-    const posY =
-      context.canvas.height - this.#exitFontSize - this.#exitLabelMargin;
-
-    drawText(
-      context,
-      label,
-      this.#exitFontSize,
-      this.textColor,
-      posX,
-      posY,
-      this.font
-    );
-  }
-  drawWestExit(context) {
-    if (!this.currentRoom.west) {
-      return;
-    }
-
-    const label = this.currentRoom.west.label;
-    const labelWidth = stringWidth(
-      context,
-      label,
-      this.#exitFontSize,
-      this.font
-    );
-    const posX = this.#exitLabelMargin;
-    const posY = context.canvas.height * 0.5 - this.#exitFontSize * 0.5;
-
-    drawText(
-      context,
-      label,
-      this.#exitFontSize,
-      this.textColor,
-      posX,
-      posY,
-      this.font
-    );
-  }
-  drawEastExit(context) {
-    if (!this.currentRoom.east) {
-      return;
-    }
-
-    const label = this.currentRoom.east.label;
-    const labelWidth = stringWidth(
-      context,
-      label,
-      this.#exitFontSize,
-      this.font
-    );
-    const posX = context.canvas.width - labelWidth - this.#exitLabelMargin;
-    const posY = context.canvas.height * 0.5 - this.#exitFontSize * 0.5;
-
-    drawText(
-      context,
-      label,
-      this.#exitFontSize,
-      this.textColor,
-      posX,
-      posY,
-      this.font
-    );
+    exitButton.style.display = "block";
+    exitButton.textContent = this.currentRoom[direction].label;
   }
 }

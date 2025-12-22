@@ -1,6 +1,4 @@
 import { testTests } from "./unitTesting.test.js";
-import { graphicsTests } from "./graphics.test.js";
-import { rectangleTests } from "./rectangle.test.js";
 
 let testsRan = 0;
 let testsFailed = 0;

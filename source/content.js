@@ -77,15 +77,11 @@ export default class ContentManager {
     const request = new Request(filePath);
     const init = noCacheInit();
 
-    try {
-      const response = await fetch(request, init);
-      this.handleBadResponse(response, filePath);
-      const json = await response.json();
-      assetInjection(json);
-      this.removeFromLoadingArray(filePath);
-    } catch (error) {
-      Debug.log(`failed to create asset from json file \n${error}`);
-    }
+    const response = await fetch(request, init);
+    this.handleBadResponse(response, filePath);
+    const json = await response.json();
+    assetInjection(json);
+    this.removeFromLoadingArray(filePath);
   }
   loadImages(imagesPath, images) {
     if (!imagesPath) {
