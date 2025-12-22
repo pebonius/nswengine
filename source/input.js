@@ -1,4 +1,3 @@
-import Debug from "./debug.js";
 import { cloneArray } from "./utilities.js";
 
 export default class InputManager {

@@ -1,5 +1,4 @@
 import Debug from "./debug.js";
-import { clearContext } from "./graphics.js";
 import InputManager from "./input.js";
 import ContentManager from "./content.js";
 import SoundManager from "./sound.js";

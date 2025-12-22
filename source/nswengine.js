@@ -112,7 +112,22 @@ export default class NSWEngine {
   }
   displayRoomDescription() {
     const roomDescriptionDiv = document.querySelector("#room-description");
+    const description = this.currentRoom.description;
+
+    if (Array.isArray(description)) {
+      this.displayDescriptionArray(description, roomDescriptionDiv);
+    } else if (typeof description === "string") {
+      this.displayDescriptionString(roomDescriptionDiv);
+    }
+  }
+  displayDescriptionString(roomDescriptionDiv) {
+    roomDescriptionDiv.style.whiteSpace = "normal";
     roomDescriptionDiv.textContent = this.currentRoom.description;
+  }
+  displayDescriptionArray(description, roomDescriptionDiv) {
+    const htmlContent = description.join("<br>");
+    roomDescriptionDiv.style.whiteSpace = "preserve nowrap";
+    roomDescriptionDiv.innerHTML = htmlContent;
   }
   displayExit(direction) {
     const exitButton = this.getExitButton(direction);
