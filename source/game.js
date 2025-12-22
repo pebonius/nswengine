@@ -10,10 +10,7 @@ export default class Game {
   #startingScene;
 
   constructor(startingScene) {
-    this.canvas = document.querySelector("#main-canvas");
-    this.context = this.canvas.getContext("2d");
-    this.context.imageSmoothingEnabled = false;
-    this.input = new InputManager(this.canvas);
+    this.input = new InputManager();
     this.content = new ContentManager();
     this.sound = new SoundManager();
     this.#startingScene = startingScene;
@@ -44,7 +41,6 @@ export default class Game {
     }
 
     this.update(this.currentScene);
-    this.draw(this.currentScene);
 
     if (this.running) {
       requestAnimationFrame(() => this.gameLoop());
@@ -59,9 +55,5 @@ export default class Game {
     scene.update(this);
 
     this.#lastUpdateTime = Date.now();
-  }
-  draw(scene) {
-    clearContext(this.context);
-    scene.draw(this.context);
   }
 }

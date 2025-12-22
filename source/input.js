@@ -6,10 +6,8 @@ export default class InputManager {
   #keysDown;
   #currentKeysDown;
   #previousKeysDown;
-  #pointerPosition;
 
-  constructor(canvas) {
-    this.canvas = canvas;
+  constructor() {
     this.#keysDown = [];
     this.#currentKeysDown = [];
     this.#previousKeysDown = [];
@@ -21,9 +19,6 @@ export default class InputManager {
   }
   get keysDown() {
     return this.#keysDown;
-  }
-  get pointerPosition() {
-    return this.#pointerPosition;
   }
   addKeys() {
     this.#keys = {
@@ -157,39 +152,6 @@ export default class InputManager {
       },
       false
     );
-    this.canvas.addEventListener("pointerdown", (e) => {
-      this.isclick = true;
-    });
-    this.canvas.addEventListener("pointerup", (e) => {
-      this.consumeClick();
-    });
-    this.canvas.addEventListener("pointercancel", (e) => {
-      this.consumeClick();
-    });
-    this.canvas.addEventListener("pointermove", (e) => {
-      this.cachePointerPosition(e);
-    });
-    this.canvas.addEventListener("pointerleave", (e) => {
-      this.#pointerPosition = null;
-    });
-  }
-  cachePointerPosition(e) {
-    this.#pointerPosition = {
-      x: Math.floor(this.checkPointerPosition(e).x),
-      y: Math.floor(this.checkPointerPosition(e).y),
-    };
-  }
-  isClick() {
-    if (!this.pointerPosition) {
-      return false;
-    }
-
-    const click = this.isclick;
-    this.consumeClick();
-    return click;
-  }
-  consumeClick() {
-    this.isclick = false;
   }
   cacheKeysDown() {
     this.#previousKeysDown = cloneArray(this.keysDown);
@@ -209,15 +171,5 @@ export default class InputManager {
   }
   isKeyDown(key) {
     return this.#currentKeysDown[key];
-  }
-  checkPointerPosition(e) {
-    const canvasActualWidth = this.canvas.getBoundingClientRect().width;
-    const canvasOriginalWidth = this.canvas.width;
-    const rescaleRatio = canvasActualWidth / canvasOriginalWidth;
-    const rect = e.target.getBoundingClientRect();
-    return {
-      x: e.clientX / rescaleRatio - rect.left,
-      y: e.clientY / rescaleRatio - rect.top,
-    };
   }
 }
