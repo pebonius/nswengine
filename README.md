@@ -113,8 +113,6 @@ if you upload it to whatever server online (itch/ github pages/ whatever else) i
 
 for itch, you can pack the entire folder with the `index.html` file and all the source into a `.zip` archive and upload it, it should run the game after uploading it to itch
 
-the dimensions you'll want to set for the embed window are 640px width by 480px height.
-
 ## controls
 
 the player controls movement between the rooms using either arrow keys (up down left right) or mouse / touch input
