@@ -9,6 +9,10 @@ export default class NSWEngine {
   #musicTracksPath = "";
   #musicTracks = [];
   #defaultFont = "Arial";
+  #defaultBackgroundColor = "cornflowerblue";
+  #defaultTextColor = "white";
+  #defaultDescription = "not defined";
+  #defaultLabel = "not defined";
 
   constructor() {
     this.addButtonOnClickEvents();
@@ -37,17 +41,39 @@ export default class NSWEngine {
   get currentRoom() {
     return this.data.rooms.find((room) => room.id === this.currentRoomId);
   }
-  get textColor() {
-    return this.currentRoom.textColor;
+  get currentTextColor() {
+    const roomTextColor = this.currentRoom.textColor;
+    return roomTextColor ? roomTextColor : this.#defaultTextColor;
   }
-  get backgroundColor() {
-    return this.currentRoom.backgroundColor;
+  get currentBackgroundColor() {
+    const roomBackgroundColor = this.currentRoom.backgroundColor;
+    return roomBackgroundColor
+      ? roomBackgroundColor
+      : this.#defaultBackgroundColor;
   }
-  get font() {
+  get currentDescription() {
+    const roomDescription = this.currentRoom.description;
+
+    if (roomDescription === "") {
+      return roomDescription;
+    }
+
+    return roomDescription ? roomDescription : this.#defaultDescription;
+  }
+  get currentFont() {
     return !this.currentRoom.font ? this.#defaultFont : this.currentRoom.font;
   }
   getExitButton(direction) {
     return document.querySelector(`#${direction}-exit-button`);
+  }
+  getExitLabel(direction) {
+    const label = this.currentRoom[direction].label;
+
+    if (label === "") {
+      return label;
+    }
+
+    return label ? label : this.#defaultLabel;
   }
   start(game) {
     this.game = game;
@@ -108,30 +134,29 @@ export default class NSWEngine {
   setColors() {
     const gameContainer = document.querySelector("#game-container");
 
-    gameContainer.style.backgroundColor = this.backgroundColor;
-    gameContainer.style.color = this.textColor;
+    gameContainer.style.backgroundColor = this.currentBackgroundColor;
+    gameContainer.style.color = this.currentTextColor;
   }
   setFont() {
     const gameContainer = document.querySelector("#game-container");
 
-    gameContainer.style.fontFamily = this.font;
+    gameContainer.style.fontFamily = this.currentFont;
   }
   displayRoomDescription() {
     const roomDescriptionDiv = document.querySelector("#room-description");
-    const description = this.currentRoom.description;
 
-    if (Array.isArray(description)) {
-      this.displayDescriptionArray(description, roomDescriptionDiv);
-    } else if (typeof description === "string") {
+    if (Array.isArray(this.currentDescription)) {
+      this.displayDescriptionArray(roomDescriptionDiv);
+    } else if (typeof this.currentDescription === "string") {
       this.displayDescriptionString(roomDescriptionDiv);
     }
   }
   displayDescriptionString(roomDescriptionDiv) {
     roomDescriptionDiv.style.whiteSpace = "normal";
-    roomDescriptionDiv.textContent = this.currentRoom.description;
+    roomDescriptionDiv.textContent = this.currentDescription;
   }
-  displayDescriptionArray(description, roomDescriptionDiv) {
-    const htmlContent = description.join("<br>");
+  displayDescriptionArray(roomDescriptionDiv) {
+    const htmlContent = this.currentDescription.join("<br>");
     roomDescriptionDiv.style.whiteSpace = "preserve nowrap";
     roomDescriptionDiv.innerHTML = htmlContent;
   }
@@ -144,6 +169,7 @@ export default class NSWEngine {
     }
 
     exitButton.style.display = "block";
-    exitButton.textContent = this.currentRoom[direction].label;
+
+    exitButton.textContent = this.getExitLabel(direction);
   }
 }

@@ -35,14 +35,16 @@ to break this down, `rooms` is just an array of objects, with each object being 
 
 every room must have
 
-- an `id` (for the starting room id must be `0`)
-- a `textColor` - this can be a html color name or a hex or rgb/ rgba value
-- a `backgroundColor` - this can be a html color name or a hex or rgb/ rgba value
+- an `id` - must be `0` for starting room, for other rooms this can be a number or a string, but must be unique (if two rooms have the same id, the game will always access the first room with that id)
 - a `description` - string of text that will be displayed in the center of the room
+
+every room can (but doesn't have to) have
+- a `textColor` - this can be a html color name or a hex or rgb/ rgba value. if no color is provided text will display with default color
+- a `backgroundColor` - this can be a html color name or a hex or rgb/ rgba value. if no color is provided background will display with default color
 
 additionally, every room can have up to four exits, these must be `north`, `south`, `west` or `east`, or any combination of those. you cannot define two instances of the same exit for the same room (e.g. two `north` exits), and you cannot define any other exit (e.g. `north-west`)
 
-every exit has
+every exit most have
 
 - a `label` - text that will be displayed for that exit
 - a `linkTo` - id of the room that the exit links to
