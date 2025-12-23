@@ -9,7 +9,6 @@ body {
   width: 100%;
   height: 100vh;
   text-align: center;
-  overflow: hidden;
 }
 
 #game-container {
@@ -18,6 +17,7 @@ body {
   height: 100%;
   background-color: cornflowerblue;
   color: white;
+  overflow: hidden;
 }
 
 #room-description {
