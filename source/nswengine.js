@@ -35,7 +35,7 @@ export default class NSWEngine {
     return this.#musicTracks;
   }
   get currentRoom() {
-    return this.data.rooms[this.currentRoomId];
+    return this.data.rooms.find((room) => room.id === this.currentRoomId);
   }
   get textColor() {
     return this.currentRoom.textColor;
@@ -91,6 +91,12 @@ export default class NSWEngine {
     Debug.log(`entering room ${this.currentRoomId}`);
   }
   displayCurrentRoom() {
+    if (!this.currentRoom) {
+      throw new Error(
+        `room with id \'${this.currentRoomId}\' was not defined in data.json`
+      );
+    }
+
     this.setColors();
     this.setFont();
     this.displayRoomDescription();
