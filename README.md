@@ -44,12 +44,12 @@ every room can (but doesn't have to) have
 
 additionally, every room can have up to four exits, these must be `north`, `south`, `west` or `east`, or any combination of those. you cannot define two instances of the same exit for the same room (e.g. two `north` exits), and you cannot define any other exit (e.g. `north-west`)
 
-every exit most have
+every exit must have
 
 - a `label` - text that will be displayed for that exit
 - a `linkTo` - id of the room that the exit links to
 
-also, the first room serves as the game's "title screen", the game does not have any state management outside switching between the rooms
+also, the starting room serves as the game's "title screen", the game does not have any state management outside switching between rooms
 
 ## ascii support
 
@@ -83,9 +83,9 @@ this way you can define ascii graphics, and the description will align horizonta
 }
 ```
 
-you can also use the optional `font` parameter to set the font to a monospace one
+you can use the optional `font` parameter to set the font to a monospace one
 
-when adding ascii graphics mind that certain characters, like the backslash `\` or quotation marks `"` will need to be escaped by putting a backslash in front `\`, otherwise json will get angry at you
+when adding ascii graphics mind that some characters, like the backslash `\` or quotation marks `"` will need to be escaped by putting a backslash in front `\`, otherwise json will get angry at you
 
 so this won't work
 
@@ -105,15 +105,15 @@ but this will
 
 ## playing the game
 
-to play the game locally you'll need to open the `index.html` file with `Live Server`, or `http-server`, or some other similar solution.
+to play the game locally you need to open the `index.html` file with `Live Server`, or `http-server`, or some other similar solution.
 
-the ES6 modules are not going to load if you just open the `index.html` file locally without a server.
+the ES6 modules are not going to load if you just open the `index.html` file directly without a server.
 
 if you upload it to whatever server online (itch/ github pages/ whatever else) it should run out of the box.
 
 ### uploading to itch
 
-for itch, you can pack the entire folder with the `index.html` file and all the source into a `.zip` archive and upload it, it should run the game after uploading it to itch
+you can pack the entire folder with the `index.html` file and all the source into a `.zip` archive and upload it to itch, and the game should run nicely
 
 ## controls
 
