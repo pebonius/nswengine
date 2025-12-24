@@ -1,4 +1,5 @@
 import Debug from "./debug.js";
+import { isColor } from "./utilities.js";
 
 export default class NSWEngine {
   #dataFilePath = "./data.json";
@@ -43,13 +44,27 @@ export default class NSWEngine {
   }
   get currentTextColor() {
     const roomTextColor = this.currentRoom.textColor;
-    return roomTextColor ? roomTextColor : this.#defaultTextColor;
+
+    if (!isColor(roomTextColor)) {
+      Debug.log(
+        `room ${this.currentRoomId}: \'${roomTextColor}\' is not a valid textColor`
+      );
+      return this.#defaultTextColor;
+    }
+
+    return roomTextColor;
   }
   get currentBackgroundColor() {
     const roomBackgroundColor = this.currentRoom.backgroundColor;
-    return roomBackgroundColor
-      ? roomBackgroundColor
-      : this.#defaultBackgroundColor;
+
+    if (!isColor(roomBackgroundColor)) {
+      Debug.log(
+        `room ${this.currentRoomId}: \'${roomBackgroundColor}\' is not a valid backgroundColor`
+      );
+      return this.#defaultBackgroundColor;
+    }
+
+    return roomBackgroundColor;
   }
   get currentDescription() {
     const roomDescription = this.currentRoom.description;

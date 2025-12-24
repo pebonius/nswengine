@@ -1,12 +1,12 @@
 import { testTests } from "./unitTesting.test.js";
+import { utilitiesTests } from "./utilities.test.js";
 
 let testsRan = 0;
 let testsFailed = 0;
 
 const testsToRun = [
   { tests: testTests, name: "test tests" },
-  { tests: graphicsTests, name: "graphics tests" },
-  { tests: rectangleTests, name: "rectangle tests" },
+  { tests: utilitiesTests, name: "utilities tests" },
 ];
 
 export function is(receivedValue, expectedValue) {

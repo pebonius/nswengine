@@ -220,3 +220,7 @@ export const msToTimeString = (ms) => {
 
   return `${hoursString}:${minutesString}:${secondsString}`;
 };
+
+export const isColor = (color) => {
+  return CSS.supports("color", color);
+};
