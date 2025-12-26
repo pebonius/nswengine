@@ -13,7 +13,7 @@ export default class NSWEngine {
   #defaultBackgroundColor = "cornflowerblue";
   #defaultTextColor = "white";
   #defaultDescription = "not defined";
-  #defaultLabel = "not defined";
+  #defaultExitLabel = "not defined";
 
   constructor() {
     this.addButtonOnClickEvents();
@@ -39,17 +39,52 @@ export default class NSWEngine {
   get musicTracks() {
     return this.#musicTracks;
   }
+  get defaultFont() {
+    return this.#defaultFont;
+  }
+  get defaultBackgroundColor() {
+    return this.#defaultBackgroundColor;
+  }
+  get defaultTextColor() {
+    return this.#defaultTextColor;
+  }
+  get defaultDescription() {
+    return this.#defaultDescription;
+  }
+  get defaultExitLabel() {
+    return this.#defaultExitLabel;
+  }
+  get directions() {
+    return {
+      n: "north",
+      s: "south",
+      w: "west",
+      e: "east",
+    };
+  }
+  get allDirections() {
+    return [
+      this.directions.n,
+      this.directions.s,
+      this.directions.w,
+      this.directions.e,
+    ];
+  }
   get currentRoom() {
     return this.data.rooms.find((room) => room.id === this.currentRoomId);
   }
   get currentTextColor() {
     const roomTextColor = this.currentRoom.textColor;
 
+    if (roomTextColor === undefined) {
+      return this.defaultTextColor;
+    }
+
     if (!isColor(roomTextColor)) {
       Debug.log(
         `room ${this.currentRoomId}: \'${roomTextColor}\' is not a valid textColor`
       );
-      return this.#defaultTextColor;
+      return this.defaultTextColor;
     }
 
     return roomTextColor;
@@ -57,11 +92,15 @@ export default class NSWEngine {
   get currentBackgroundColor() {
     const roomBackgroundColor = this.currentRoom.backgroundColor;
 
+    if (roomBackgroundColor === undefined) {
+      return this.defaultBackgroundColor;
+    }
+
     if (!isColor(roomBackgroundColor)) {
       Debug.log(
         `room ${this.currentRoomId}: \'${roomBackgroundColor}\' is not a valid backgroundColor`
       );
-      return this.#defaultBackgroundColor;
+      return this.defaultBackgroundColor;
     }
 
     return roomBackgroundColor;
@@ -69,14 +108,21 @@ export default class NSWEngine {
   get currentDescription() {
     const roomDescription = this.currentRoom.description;
 
-    if (roomDescription === "") {
-      return roomDescription;
+    if (roomDescription === undefined) {
+      Debug.log(`room ${this.currentRoomId}: no room description found`);
+      return this.defaultDescription;
     }
 
-    return roomDescription ? roomDescription : this.#defaultDescription;
+    return roomDescription;
   }
   get currentFont() {
-    return !this.currentRoom.font ? this.#defaultFont : this.currentRoom.font;
+    const roomFont = this.currentRoom.font;
+
+    if (roomFont === undefined) {
+      return this.defaultFont;
+    }
+
+    return roomFont;
   }
   getExitButton(direction) {
     return document.querySelector(`#${direction}-exit-button`);
@@ -88,7 +134,7 @@ export default class NSWEngine {
       return label;
     }
 
-    return label ? label : this.#defaultLabel;
+    return label ? label : this.defaultExitLabel;
   }
   start(game) {
     this.game = game;
@@ -97,7 +143,7 @@ export default class NSWEngine {
     this.displayCurrentRoom();
   }
   addButtonOnClickEvents() {
-    ["north", "south", "west", "east"].forEach((direction) => {
+    this.allDirections.forEach((direction) => {
       const exitButton = this.getExitButton(direction);
 
       exitButton.onclick = () => {
@@ -111,20 +157,24 @@ export default class NSWEngine {
   handleKeyboardInput(game) {
     const input = game.input;
     if (input.isKeyPressed(input.keys.UP)) {
-      this.go("north");
+      this.go(this.directions.n);
     }
     if (input.isKeyPressed(input.keys.DOWN)) {
-      this.go("south");
+      this.go(this.directions.s);
     }
     if (input.isKeyPressed(input.keys.LEFT)) {
-      this.go("west");
+      this.go(this.directions.w);
     }
     if (input.isKeyPressed(input.keys.RIGHT)) {
-      this.go("east");
+      this.go(this.directions.e);
     }
   }
   go(direction) {
     if (!this.currentRoom[direction]) {
+      return;
+    }
+    if (this.currentRoom[direction].linkTo === undefined) {
+      Debug.log(`no \'linkTo\' provided for \'${direction}\' exit`);
       return;
     }
     this.currentRoomId = this.currentRoom[direction].linkTo;
@@ -141,10 +191,9 @@ export default class NSWEngine {
     this.setColors();
     this.setFont();
     this.displayRoomDescription();
-    this.displayExit("north");
-    this.displayExit("south");
-    this.displayExit("west");
-    this.displayExit("east");
+    this.allDirections.forEach((direction) => {
+      this.displayExit(direction);
+    });
   }
   setColors() {
     const gameContainer = document.querySelector("#game-container");
@@ -159,19 +208,20 @@ export default class NSWEngine {
   }
   displayRoomDescription() {
     const roomDescriptionDiv = document.querySelector("#room-description");
+    const description = this.currentDescription;
 
-    if (Array.isArray(this.currentDescription)) {
-      this.displayDescriptionArray(roomDescriptionDiv);
-    } else if (typeof this.currentDescription === "string") {
-      this.displayDescriptionString(roomDescriptionDiv);
+    if (Array.isArray(description)) {
+      this.displayDescriptionArray(roomDescriptionDiv, description);
+    } else if (typeof description === "string") {
+      this.displayDescriptionString(roomDescriptionDiv, description);
     }
   }
-  displayDescriptionString(roomDescriptionDiv) {
+  displayDescriptionString(roomDescriptionDiv, description) {
     roomDescriptionDiv.style.whiteSpace = "normal";
-    roomDescriptionDiv.textContent = this.currentDescription;
+    roomDescriptionDiv.textContent = description;
   }
-  displayDescriptionArray(roomDescriptionDiv) {
-    const htmlContent = this.currentDescription.join("<br>");
+  displayDescriptionArray(roomDescriptionDiv, description) {
+    const htmlContent = description.join("<br>");
     roomDescriptionDiv.style.whiteSpace = "preserve nowrap";
     roomDescriptionDiv.innerHTML = htmlContent;
   }
@@ -184,7 +234,6 @@ export default class NSWEngine {
     }
 
     exitButton.style.display = "block";
-
     exitButton.textContent = this.getExitLabel(direction);
   }
 }
