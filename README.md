@@ -50,7 +50,7 @@ every exit must have
 - a `label` - text that will be displayed for that exit
 - a `linkTo` - id of the room that the exit links to
 
-if you do not include an exit in a room, the player will not be able to leave it, making that room an "end state" for your game
+if you do not include any exit in a room, the player will not be able to leave it, making that room an "end state" for your game
 
 also, the starting room serves as the game's "title screen", the game does not have any state management outside switching between rooms
 
